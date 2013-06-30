@@ -17,6 +17,24 @@ function initTextArea($el){
             event.preventDefault();
         }
     });
+
+
+    $el.bind( "keyup", function( event ) {
+
+        if(event.keyCode == 83 && event.altKey){
+            saveTask($el);
+            event.preventDefault();
+            return false;
+        }
+
+    });
+}
+
+
+function saveTask($el){
+    $('#task-list').append('<span>' + $el.val() + '</span><br>');
+    $el.val('');
+    //console.log($el.val());
 }
 
 function processText(){
