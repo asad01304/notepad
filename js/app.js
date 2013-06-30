@@ -1,7 +1,8 @@
 
 var keys = {},
     keyAlias = {},
-    kp = /@([a-z\s]+):([^\s]*)$/ ;
+    kp = /@([a-z\s]+):([^\s]*)$/
+    hp = /#([^\s]*)$/;
 
 
 var preSelector = null;
@@ -22,8 +23,10 @@ function processText(){
 
     if(preSelector) $('.' + preSelector).remove();
 
-    var txt = $(this).val(), key = kp.exec(txt);
-    if(key) handleActionKey(key[1], key[2], $(this));
+    var txt = $(this).val(), key = kp.exec(txt), hash = hp.exec(txt);
+    if(key)  handleActionKey(key[1], key[2], $(this));
+    if(hash) handleHash(hash[1], $(this));
+
 }
 
 function handleActionKey(key, val, $el){
@@ -42,6 +45,22 @@ function handleActionKey(key, val, $el){
     if(keys[actionKey]){
         return (keys[actionKey])(actionKey, val, $el)
     }
+}
+
+function handleHash(hash, $el){
+    $el.autocomplete({
+        source: availableTags,
+        focus: function() {
+            return false;
+        },
+        select: function( event, ui ) {
+            this.value = this.value.replace(new RegExp( hash + '$'), '') + ui.item.value ;
+
+            $el.autocomplete('destroy');
+            return false;
+        }
+    }).autocomplete( "search", hash )
+
 }
 
 function handleActionResult($el, result){
@@ -90,7 +109,7 @@ keyAlias['date'] = ['start date', 'end date'];
 var people = []
 
 
-var availableTags = [
+var availablePeople = [
     "S M Asad Rahman",
     "S M Azad Rahman",
     "E Hasan",
@@ -98,11 +117,20 @@ var availableTags = [
     "Masuiddaa"
 ];
 
+var availableTags = [
+    "PHP",
+    "JAVA",
+    "C++",
+    "Scala",
+    "Ruby"
+];
+
+
 
 keys['assign'] = function(key, val, $el){
 
     $el.autocomplete({
-        source: availableTags,
+        source: availablePeople,
         focus: function() {
             return false;
         },
